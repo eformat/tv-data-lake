@@ -49,7 +49,7 @@ public class S3SyncClientResource {
     @Incoming("tv-in-r5")
     public void storeInS3R5(JsonObject aggregation) {
         String cacheKey = String.format("%s-%s-%s", "r5", aggregation.getString("key"), aggregation.getString("instant"));
-        PutObjectResponse putResponse = s3.putObject(buildPutRequest(r1bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
+        PutObjectResponse putResponse = s3.putObject(buildPutRequest(r5bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
         if (putResponse != null) {
             // ok
             log.debug("::storeInS3R5 ok: " + putResponse);
@@ -61,7 +61,7 @@ public class S3SyncClientResource {
     @Incoming("tv-in-t1")
     public void storeInS3T1(JsonObject aggregation) {
         String cacheKey = String.format("%s-%s-%s", "t1", aggregation.getString("key"), aggregation.getString("instant"));
-        PutObjectResponse putResponse = s3.putObject(buildPutRequest(r1bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
+        PutObjectResponse putResponse = s3.putObject(buildPutRequest(t1bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
         if (putResponse != null) {
             // ok
             log.debug("::storeInS3T1 ok: " + putResponse);
@@ -73,7 +73,7 @@ public class S3SyncClientResource {
     @Incoming("tv-in-t5")
     public void storeInS3T5(JsonObject aggregation) {
         String cacheKey = String.format("%s-%s-%s", "t5", aggregation.getString("key"), aggregation.getString("instant"));
-        PutObjectResponse putResponse = s3.putObject(buildPutRequest(r1bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
+        PutObjectResponse putResponse = s3.putObject(buildPutRequest(t5bucketName, cacheKey, aggregation), RequestBody.fromString(aggregation.toString()));
         if (putResponse != null) {
             // ok
             log.debug("::storeInS3T5 ok: " + putResponse);
