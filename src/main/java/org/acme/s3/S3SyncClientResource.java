@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-@Path("/s3")
 @ApplicationScoped
 public class S3SyncClientResource {
 
