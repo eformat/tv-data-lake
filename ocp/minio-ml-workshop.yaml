@@ -1,0 +1,117 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-ml-workshop
+  labels:
+    component: minio
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: minio
+  template:
+    metadata:
+      labels:
+        component: minio
+    spec:
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio
+      - name: config
+        emptyDir: {}
+      containers:
+      - name: minio
+        image: quay.io/eformat/mlminio:latest
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        args:
+        - server
+        - /storage
+        - --config-dir=/config
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: "minio"
+        - name: MINIO_SECRET_KEY
+          value: "minio123"
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: storage
+          mountPath: "/storage"
+        - name: config
+          mountPath: "/config"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-ml-workshop
+  labels:
+    component: minio
+spec:
+  ports:
+    - port: 9000
+      protocol: TCP
+  selector:
+    component: minio
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-setup-ml-workshop
+  labels:
+    component: minio
+spec:
+  template:
+    metadata:
+      name: minio-setup-ml-workshop
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+      - name: config
+        emptyDir: {}
+      containers:
+      - name: mc
+        image: minio/mc:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - "mc --config-dir=/config config host add tripvibe http://minio-ml-workshop:9000 minio minio123 && mc --config-dir=/config mb -p tripvibe/tripvibe-route-1-minute && mc --config-dir=/config mb -p tripvibe/tripvibe-route-5-minute && mc --config-dir=/config mb -p tripvibe/tripvibe-trip-1-minute && mc --config-dir=/config mb -p tripvibe/tripvibe-trip-5-minute"
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: minio
+  labels:
+    component: minio
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: null
+  subdomain: ''
+  to:
+    kind: Service
+    name: minio-ml-workshop
+    weight: 100
+  port:
+    targetPort: 9000
+  wildcardPolicy: None

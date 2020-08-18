@@ -1,0 +1,22 @@
+{{- if .Values.route }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "tv-data-lake.fullname" . }}
+  labels:
+    {{- include "tv-data-lake.labels" . | nindent 4 }}
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: {{ include "tv-data-lake.fullname" . }}
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+        - status: 'True'
+          type: Admitted
+{{ end }}
