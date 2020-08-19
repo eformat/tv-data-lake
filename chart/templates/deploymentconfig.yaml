@@ -61,7 +61,7 @@ spec:
           - {{ include "tv-data-lake.name" . }}
         from:
           kind: ImageStreamTag
-          name: {{ include "tv-data-lake.fullname" . }}:{{ .Chart.AppVersion }}
+          name: {{ include "tv-data-lake.fullname" . }}:{{ .Values.image_version }}
         lastTriggeredImage: ""
       type: ImageChange
 {{- end }}
