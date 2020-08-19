@@ -14,4 +14,4 @@ spec:
         kind: DockerImage
         name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Values.image_version }}
       importPolicy: {}
-      name: {{ .Chart.AppVersion }}
+      name: {{ .Values.image_version }}
