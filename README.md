@@ -11,4 +11,3 @@ Start minio
 ```bash
 podman-compose up -d
 ```
-
