@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "tv-data-lake.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicas.min }}
   revisionHistoryLimit: 10
   selector:
     {{- include "tv-data-lake.selectorLabels" . | nindent 4 }}
